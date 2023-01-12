@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "vxKjyJgha6aaCPowZrtDRb0wSe+290/pr/2GLW+LZXIYOOecBuLsF8+vYeDDg6Da7GV1YxvdkMxnYpOcZht0/Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Svart\\Source\\Repos\\Webbutveckling\\02_WPF\\02_WPF\\02_WPF.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Svart\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

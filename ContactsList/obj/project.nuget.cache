@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "nFLOoCKH2uI9nl1Z7qAh4lXn26ZRovvS8Nfy3P1OaA+R/pIYOFnpOZaoeAiNNdKCNot44OrsfZUmyqkgrqevrA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Svart\\Source\\Repos\\Webbutveckling\\02_WPF\\ContactsList\\ContactsList.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Svart\\.nuget\\packages\\newtonsoft.json\\13.0.2\\newtonsoft.json.13.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
