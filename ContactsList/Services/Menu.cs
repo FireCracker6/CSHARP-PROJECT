@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Security.Cryptography.X509Certificates;
 using ContactsList.Interfaces;
 using ContactsList.Models;
 using ContactsList.Models.AbstractModels;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace ContactsList.Services;
@@ -13,13 +17,20 @@ internal class Menu
     
     public void WelcomeMenu()
     {
-        Console.Clear();    
+        Console.Clear();
+        Console.WriteLine("\n-----------------------------------");
         Console.WriteLine("Välkommen till Admin Applikationen");
+        Console.WriteLine("-----------------------------------");
+        Console.WriteLine("");
         Console.WriteLine("1. Lägg till en ny Kund");
         Console.WriteLine("2. Lägg till en ny Anställd");
         Console.WriteLine("3. Visa alla kunder");
         Console.WriteLine("4. Visa alla anställda");
+        Console.WriteLine("5. Ta bort en kund");
+        Console.WriteLine("6. Ta bort en anställd");
+        Console.WriteLine("7. Sök efter en anställd, kund, eller företagskund\n");
         Console.WriteLine("Ange ett av alternativen ovan: ");
+  
         var option = Console.ReadLine();
 
         switch(option)
@@ -28,6 +39,9 @@ internal class Menu
             case "2": OptionTwo(); break;
             case "3": OptionThree(); break;
             case "4": OptionFour(); break;
+            case "5": OptionFive(); break;
+            case "6": OptionSix(); break;
+            case "7": OptionSeven(); break;
         }
     }
 
@@ -104,8 +118,8 @@ internal class Menu
         {
             case "1": CreateCEO(); break;
             case "2": CreateCFO(); break;
-            // case "3": CreateAssistant(); break;
-            // case "4": CreateKeyAccountManager(); break;
+            case "3": CreateAssistant(); break;
+            case "4": CreateKeyAccountManager(); break;
         }
         file.Save(JsonConvert.SerializeObject(contactList));
 
@@ -152,6 +166,41 @@ internal class Menu
 
     }
 
+    private void CreateAssistant()
+    {
+        Console.Clear();
+        Console.WriteLine("Lägg till en ny Assistent: ");
+
+        Assistant assistant = new Assistant();
+        Console.Write("Ange Förnamn: ");
+        assistant.FirstName = Console.ReadLine() ?? "";
+        Console.Write("Ange Efternamn: ");
+        assistant.LastName = Console.ReadLine() ?? "";
+        Console.Write("Ange E-postadress: ");
+        assistant.Email = Console.ReadLine() ?? "";
+
+        contactList.Add(assistant);
+    }
+
+    private void CreateKeyAccountManager()
+    {
+        Console.Clear();
+        Console.WriteLine("Lägg till en ny Key Account Manager: ");
+
+        KeyAccountManager ka = new KeyAccountManager();
+        Console.Write("Ange Förnamn: ");
+        ka.FirstName = Console.ReadLine() ?? "";
+        Console.Write("Ange Efternamn: ");
+        ka.LastName = Console.ReadLine() ?? "";
+        Console.Write("Ange E-postadress: ");
+        ka.Email = Console.ReadLine() ?? "";
+
+        // Hur får man fram lista med kunder??
+
+        contactList.Add(ka);
+        
+    }
+
     private void OptionThree()
     {
         foreach(var contact in contactList)
@@ -172,7 +221,8 @@ internal class Menu
                     var _privateCustomer = contact as PrivateCustomer;
                     Console.WriteLine("Privatkund: ");
                     Console.WriteLine("--------------");
-                    Console.WriteLine($"{_privateCustomer!.LastName}");
+                    Console.WriteLine($" Förnamn: {_privateCustomer!.FirstName}, Efternamn:  {_privateCustomer!.LastName} E-postadress: {_privateCustomer.Email}");
+                    Console.WriteLine("");
                     break;
             }            
         }
@@ -189,18 +239,223 @@ internal class Menu
             {
                 case "CEO":
                     var _ceo = contact as CEO;
-                    Console.WriteLine($"{_ceo!.BenificalOwner}");
+                    Console.WriteLine("VD: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_ceo!.FirstName}, Efternamn: {_ceo!.LastName}, Verklig huvudman?  {_ceo!.BenificalOwner}");
+                    Console.WriteLine("");
                     break;
 
                 case "CFO":
                     var _cfo = contact as CFO;
-                    Console.WriteLine($"{_cfo!.FirstName}");
+                    Console.WriteLine("EkonomiChef: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_cfo!.FirstName}, Efternamn: {_cfo.LastName}, E-postadress: {_cfo.Email}");
+                    Console.WriteLine("");
+                    break;
+
+                case "Assistant":
+                    var _assistant = contact as Assistant;
+                    Console.WriteLine("Assistent(er): ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_assistant!.FirstName} Efternamn: {_assistant.LastName} E-post: {_assistant.Email}");
+                    Console.WriteLine("");
+                    break;
+                case "KeyAccountManager":
+                    var _ka = contact as KeyAccountManager;
+                    Console.WriteLine("Key Account Manager: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_ka!.FirstName} Efternamn: {_ka.LastName} E-post: {_ka.Email}");
+                    Console.WriteLine("");
                     break;
             }
         }
 
         Console.ReadKey();
+
+
     }
+
+    private void OptionFive()
+    {
+
+        Console.WriteLine("All customers are listed below: ");
+        foreach (var contact in contactList)
+        {
+            switch (contact.Type)
+            {
+                case "BusinessCustomer":
+                    var _businessCustomer = contact as BusinessCustomer;
+                    Console.WriteLine("Företagskund: ");
+                    Console.WriteLine("--------------");
+                    Console.WriteLine($"Organisationsnummer: {_businessCustomer!.OrganizationNumber}");
+                    Console.WriteLine($"Företagnamn: {_businessCustomer!.CompanyName}");
+                    Console.WriteLine($"Kontaktperson: {_businessCustomer!.ContactPerson}");
+                    Console.WriteLine("");
+                    break;
+
+                case "PrivateCustomer":
+                    var _privateCustomer = contact as PrivateCustomer;
+                    Console.WriteLine("Privatkund: ");
+                    Console.WriteLine("--------------");
+                    Console.WriteLine($" Förnamn: {_privateCustomer!.FirstName}, Efternamn:  {_privateCustomer!.LastName} E-postadress: {_privateCustomer.Email}");
+                    Console.WriteLine("");
+                    break;
+            }
+        }
+
+
+        Console.WriteLine("To remove a customer please enter a first name: ");
+        var removeCustomer = Console.ReadLine() ?? "";
+
+        var index = contactList.FindIndex(x => x.FirstName == removeCustomer);
+        if (removeCustomer != "")
+        {
+            if (index >= 0)
+            {
+                Console.WriteLine($"Are you sure you want to delete{removeCustomer} ? (Y/N)");
+                Console.WriteLine("");
+                if (Console.ReadKey().Key == ConsoleKey.Y)
+                {
+                    contactList.RemoveAt(index);
+                    file.Save(JsonConvert.SerializeObject(contactList));
+                    Console.WriteLine($"\n{removeCustomer} was successfully removed from the list!");
+                    Console.ReadKey();
+                }
+            }
+            else
+                Console.WriteLine("No such person in the list");
+        }
+        else
+            Console.WriteLine("could not find that person! please try again.");
+        Console.ReadKey();
+
+    }
+
+    private void OptionSix()
+    {
+
+        foreach (var contact in contactList)
+        {
+
+            Console.WriteLine("All current employees are listed below: ");
+            switch (contact.Type)
+            {
+                case "CEO":
+                    var _ceo = contact as CEO;
+                    Console.WriteLine("VD: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_ceo!.FirstName}, Efternamn: {_ceo!.LastName}, Verklig huvudman?  {_ceo!.BenificalOwner}");
+                    Console.WriteLine("");
+
+
+                    break;
+
+                case "CFO":
+                    var _cfo = contact as CFO;
+                    Console.WriteLine("EkonomiChef: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_cfo!.FirstName}, Efternamn: {_cfo.LastName}, E-postadress: {_cfo.Email}");
+                    Console.WriteLine("");
+                    break;
+
+                case "Assistant":
+                    var _assistant = contact as Assistant;
+                    Console.WriteLine("Assistent(er): ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_assistant!.FirstName} Efternamn: {_assistant.LastName} E-post: {_assistant.Email}");
+                    Console.WriteLine("");
+                    break;
+                case "KeyAccountManager":
+                    var _ka = contact as KeyAccountManager;
+                    Console.WriteLine("Key Account Manager: ");
+                    Console.WriteLine("---------------");
+                    Console.WriteLine($"Förnamn: {_ka!.FirstName} Efternamn: {_ka.LastName} E-post: {_ka.Email}");
+                    Console.WriteLine("");
+                    break;
+
+                  
+            }
+
+
+        }
+
+
+        Console.ReadKey();
+        Console.WriteLine("To remove an employee please enter a first name: ");
+       
+        var removePerson = Console.ReadLine() ?? "";
+
+            var index = contactList.FindIndex(x => x.FirstName == removePerson);
+        if (removePerson != "")
+        {
+            if (index >= 0)
+            {
+                Console.WriteLine($"Are you sure you want to delete{removePerson} ? (Y/N)\n");
+                Console.WriteLine("");
+                if (Console.ReadKey().Key == ConsoleKey.Y) {
+                contactList.RemoveAt(index);
+                file.Save(JsonConvert.SerializeObject(contactList));
+                Console.WriteLine($"{removePerson} was successfully removed from the list!");
+                    Console.ReadKey();
+                }
+            }
+            else
+                Console.WriteLine("No such person in the list");
+        }
+        else
+            Console.WriteLine("could not find that person! please try again.");
+        Console.ReadKey();
+    }
+
+    private void OptionSeven()
+    {
+        Console.WriteLine("Sök efter en anställd eller en kund: ");
+        Console.WriteLine("Sök på förnamn, eller företagsnamn: ");
+        var seekPerson = Console.ReadLine() ?? "";
+
+        if (seekPerson != "" || seekPerson != null) { 
+            foreach (var contact in contactList)
+            {
+
+                switch (contact.Type)
+                {
+                    case "CEO":
+                        CEO _ceo = contactList.FirstOrDefault(x => x.FirstName.ToLower() == seekPerson.ToLower())!;
+                        Console.WriteLine($"VD: Förnamn: {_ceo.FirstName}, Efternamn: {_ceo.LastName}");
+                        Console.ReadKey();
+                        break;
+                    case "CFO":
+                        CFO _cfo = contactList.FirstOrDefault(x => x.FirstName.ToLower() == seekPerson.ToLower())!;
+                        Console.WriteLine($"Ekonomichef: Förnamn: {_cfo.FirstName}, Efternamn: {_cfo.LastName}");
+                        Console.ReadKey();
+                        break;
+                    case "Assistant":
+                        Assistant _assistant = contactList.FirstOrDefault(x => x.FirstName.ToLower() == seekPerson.ToLower())!;
+                        Console.WriteLine($"Assistent: Förnamn: {_assistant.FirstName}, Efternamn: {_assistant.LastName}");
+                        Console.ReadKey();
+                        break;
+                    case "KeyAccountManager":
+                        KeyAccountManager _ka = contactList.FirstOrDefault(x => x.FirstName.ToLower() == seekPerson.ToLower())!;
+                        Console.WriteLine($"Key Account Manager: Förnamn: {_ka.FirstName}, Efternamn: {_ka.LastName}");
+                        Console.ReadKey();
+                        break;
+                    //case "BusinessCustomer":
+                    //    BusinessCustomer _bc = contactList.FirstOrDefault(x => x.CompanyName.ToLower() == seekPerson.ToLower())!;
+                    //    Console.WriteLine($"Företagsnamn: {_bc.CompanyName}, Kontaktperson: {_bc.ContactPerson}");
+                    //    Console.ReadKey();
+                    //    break;
+                    case "PrivateCustomer":
+                        PrivateCustomer _pc = contactList.FirstOrDefault(x => x.FirstName.ToLower() == seekPerson.ToLower())!;
+                        Console.WriteLine($"Privatkund: Förnamn: {_pc.FirstName}, Efternamn: {_pc.LastName}");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+            Console.ReadKey();
+        }
+    }
+
+  
 
     public void PopulateContactList()
     {
