@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="clr-namespace:_02_WPF.Models"
         xmlns:local="clr-namespace:_02_WPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -11,11 +12,11 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
+        <!--FORM -->
         <Grid Grid.Column="0" Margin="0 0 30 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
 
@@ -29,8 +30,19 @@
                 <TextBlock Text="E-postadress" />
                 <TextBox x:Name="tb_Email" Padding="3" Margin="0 0 0 10" />
             </StackPanel>
-            <Button x:Name="Btn_Add" Click="Btn_Add_Click" Grid.Row="1" VerticalAlignment="Bottom" Content="LÄGG TILL" Padding="5" />
+            <Button x:Name="Btn_Add" Click="Btn_Add_Click" Grid.Row="1" VerticalAlignment="Top" Content="LÄGG TILL" Padding="5" HorizontalAlignment="Left" Margin="0,216,0,0" Width="350" />
         </Grid>
+
+        <!--LIST OF EMPLOYEES-->
+        <ListView Name="lv_Employees" Grid.Column="1" Margin="30 0 0 0">
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="models:Employee">
+                    <StackPanel>
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace _02_WPF
     public partial class MainWindow : Window
     {
 
-        private List<IEmployee> employees = new();
+        private ObservableCollection<Employee> employees = new ObservableCollection<Employee>();
         private readonly FileService file = new();
   
 
@@ -43,12 +44,17 @@ namespace _02_WPF
         { 
             try
             {
-                var items = JsonConvert.DeserializeObject<List<IEmployee>>(file.Read());
+                var items = JsonConvert.DeserializeObject<ObservableCollection<Employee>>(file.Read());
                 if (items != null)
-                    employees = items.ToList();
+                {
+                    employees = items;
+                }
  
             }
             catch { }
+
+            lv_Employees.ItemsSource= employees;
+
         
         }
 
